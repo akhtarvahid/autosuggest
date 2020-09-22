@@ -1,0 +1,45 @@
+.search {
+  position: relative;
+  form {
+    display: flex;
+    div {
+      width: 100%;
+      display: flex;
+    input {
+      width: 89%;
+      padding: 10px 15px;
+      border: 1px solid lightgrey;
+      border-radius: 5px 0px 0px 5px;  
+      &:focus {
+        border: px solid lightslategrey;
+      } 
+     }
+     button {
+      font-size: 20px;
+      width: 46px;
+      color: darkcyan;
+      border: 1px solid lightgrey;
+     }
+    }
+   }
+   .overlay {
+    position: absolute;
+    background: #fff;
+    width: 100%;
+    text-align: initial;
+    top: 38px;
+    max-height: 250px;
+    overflow: auto;
+    z-index: 9999;
+    h5 {
+      padding: 15px;
+      margin: 0;
+      color: #218dda;
+    }
+     div {
+       padding: 6px 15px;
+       border-top: 1.5px solid #538890ed;
+       cursor: pointer;
+     }
+   }
+  }
