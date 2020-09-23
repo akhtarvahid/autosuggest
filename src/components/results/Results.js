@@ -1,10 +1,10 @@
 import React from "react";
 import './results.scss';
 
-export default function SearchedResult({ lists }) {
+export default function Results({ lists, searchText }) {
   return (
-    <div>
-      {lists && lists.length> 0 && <p>Results</p>}
+    <div className="results">
+      {lists && lists.length> 0 && <p>Results for <span>{searchText}</span></p>}
       <div className="searchlist-row">
         {lists &&
           lists.map((list) => (

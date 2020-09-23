@@ -1,3 +1,12 @@
+.results {
+  p {
+    text-align: initial;
+    color: #08a3de;
+    font-size: 14px;
+    span{
+      font-weight: 600;
+    }
+  }
 .searchlist-row {
     .list {
       display: flex;
@@ -13,6 +22,9 @@
         font-size: 18px;
         font-weight: bold;
         font-family: monospace;
+        padding: 10px;
+        color: #08a3de;
       }
     }
   }
+}

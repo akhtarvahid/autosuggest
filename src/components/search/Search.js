@@ -1,11 +1,19 @@
 import React from "react";
 import './search.scss';
 
-export default function Search({ searchText, typeSearch, 
-  handleSearch, handleBlur, handleClick, showSuggestion,
-  recents, setToInput }) {
-    console.log(recents)
-  const typedText = searchText.charAt(0).toUpperCase() + searchText.slice(1)
+export default function Search({ 
+  searchText, 
+  typeSearch, 
+  handleSearch, 
+  handleBlur, 
+  handleClick, 
+  showSuggestion, 
+  recents, 
+  setToInput 
+}) {
+
+  const typedText = searchText.charAt(0).toUpperCase() + searchText.slice(1);
+
   return (
     <div className="search">
     <form onSubmit={handleSearch}>

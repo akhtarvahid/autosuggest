@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Search from "./components/search/Search";
-import SearchedResult from "./components/results/Results";
-
+import Results from "./components/results/Results";
+import {API_KEY} from './utils/constants';
 import "./styles.scss";
 
-const url = "https://pixabay.com/api/?key=18391307-c2c65498da3a9e3c55f16c117";
+const url = `https://pixabay.com/api/?key=${API_KEY}`;
 export default function App() {
   const [searchText, setSearchText] = useState("");
   const [results, setResults] = useState({});
@@ -19,7 +19,7 @@ export default function App() {
     });
   }
   useEffect(()=> {
-    callToApi('');
+    callToApi('nature');
   },[])
   const typeSearch = (e) => {
     const { value } = e.target
@@ -63,7 +63,7 @@ export default function App() {
   console.log(searchText);
   return (
     <div className="App">
-      <h1>AutoSuggest</h1>
+      <h1>Autosuggest Search</h1>
       <Search
         searchText={searchText}
         typeSearch={typeSearch}
@@ -74,7 +74,10 @@ export default function App() {
         setToInput={setToInput}
         handleClick={handleClick}
       />
-      <SearchedResult lists={results.hits} />
+      <Results 
+       lists={results.hits}
+       searchText={searchText} 
+      />
     </div>
   );
 }
