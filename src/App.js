@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Search from "./components/search/Search";
 import Results from "./components/results/Results";
+import customDebounce from './components/debounce/customDebounce';
 import {API_KEY} from './utils/constants';
 import "./styles.scss";
 
@@ -8,26 +9,45 @@ const url = `https://pixabay.com/api/?key=${API_KEY}`;
 export default function App() {
   const [searchText, setSearchText] = useState("");
   const [results, setResults] = useState({});
-  const [recents, setRecents] = useState([]);
+  const [recents, setRecents] = useState(['Animal']);
   const [showSuggestion, setShowSuggestion] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const defaultText = searchText ? searchText : 'books';
+  const debouncedSearchTerm = customDebounce(defaultText, 500);
+
   const callToApi = (textPassed) => {
-    console.log(textPassed)
-    fetch(`${url}&q=${textPassed}&image_type=photo`)
+    return fetch(`${url}&q=${textPassed}&image_type=photo`)
     .then((res) => res.json())
-    .then((res) => {
-      setResults(res);
-    });
+    .then((res) => res)
+    .catch(err=> {console.log(err); return [];})
   }
   useEffect(()=> {
-    callToApi('nature');
-  },[])
+    if (debouncedSearchTerm) {
+      setIsSearching(true);
+      callToApi(debouncedSearchTerm)
+      .then(results => {
+        setIsSearching(false);
+        setResults(results);
+      });
+    } else {
+      setResults([]);
+    }
+  },
+  [debouncedSearchTerm])
+
   const typeSearch = (e) => {
     const { value } = e.target
     setSearchText(value);
     setShowSuggestion(true);
-    if (value !== undefined && value !== "" && value.length > 3) {
-      callToApi(value);
-    }
+
+      if (debouncedSearchTerm) {
+        setIsSearching(true);
+        callToApi(debouncedSearchTerm)
+        .then(results => {
+          setIsSearching(false);
+          setResults(results);
+        });
+      }
   };
   const handleSearch = (e) => {
     e.preventDefault();
@@ -57,10 +77,15 @@ export default function App() {
   const setToInput = (selected) => {
     setSearchText(selected);
     setShowSuggestion(false);
-    callToApi(selected);
-    console.log(selected)
+    if (debouncedSearchTerm) {
+      setIsSearching(true);
+      callToApi(debouncedSearchTerm)
+      .then(results => {
+        setIsSearching(false);
+        setResults(results);
+      });
+    }
   };
-  console.log(searchText);
   return (
     <div className="App">
       <h1>Autosuggest Search</h1>
@@ -77,6 +102,7 @@ export default function App() {
       <Results 
        lists={results.hits}
        searchText={searchText} 
+       isSearching={isSearching}
       />
     </div>
   );

@@ -1,4 +1,9 @@
 .results {
+  .searching {
+    font-size: 18px;
+    color: #08a3de;
+  }
+  position: relative;
   p {
     text-align: initial;
     color: #08a3de;
@@ -12,9 +17,9 @@
       display: flex;
       margin: 5px 0px;
       background-color: #fff;
+      height: 100px;
       img {
         width: 150px;
-        height: 100px;
         object-fit: cover;
       }
       div {
