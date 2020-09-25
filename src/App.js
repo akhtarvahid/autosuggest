@@ -89,6 +89,7 @@ export default function App() {
   return (
     <div className="App">
       <h1>Autosuggest Search</h1>
+      {'<To be implemented- store recent searches with x icon to delete for specified durations>'}
       <Search
         searchText={searchText}
         typeSearch={typeSearch}
@@ -99,10 +100,12 @@ export default function App() {
         setToInput={setToInput}
         handleClick={handleClick}
       />
+       {isSearching ? 
+       <p className="searching">Searching...</p>
+        : (results.hits && results.hits.length> 0) 
+        && <p>Results for <span>{searchText}</span></p>}
       <Results 
        lists={results.hits}
-       searchText={searchText} 
-       isSearching={isSearching}
       />
     </div>
   );
