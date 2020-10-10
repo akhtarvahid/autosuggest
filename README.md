@@ -1,2 +1,2 @@
 # autosuggest
-on focus auto suggest, recent searches, debouncing
+on focus auto suggest, recent searches

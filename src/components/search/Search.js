@@ -4,7 +4,7 @@ import './search.scss';
 export default function Search({ 
   searchText, 
   typeSearch, 
-  handleSearch, 
+  handleSubmitSearch, 
   handleBlur, 
   handleClick, 
   showSuggestion, 
@@ -13,10 +13,9 @@ export default function Search({
 }) {
 
   const typedText = searchText.charAt(0).toUpperCase() + searchText.slice(1);
-
   return (
     <div className="search">
-    <form onSubmit={handleSearch}>
+    <form onSubmit={handleSubmitSearch}>
       <div>
       <input
         types="text"
@@ -31,14 +30,14 @@ export default function Search({
       </button>
       </div>
     </form>
-    {(showSuggestion && recents.length>0) && 
+    {(showSuggestion && recents && recents.length>0) && 
      <div className="overlay">
         <h5>Recently searched</h5>
         {recents && 
-         recents.map(recent=>
+         recents.slice(0, 10).map(recent=>
          <div key={recent} onClick={()=>setToInput(recent)}>
            {recent.includes(typedText) ? <>
-            <span style={{color:'blue'}}>{recent.slice(0, typedText.length)}</span>
+            <span className="heighlight">{recent.slice(0, typedText.length)}</span>
             <span>{recent.slice(typedText.length, recent.length)}</span></>: recent
           }
            </div>

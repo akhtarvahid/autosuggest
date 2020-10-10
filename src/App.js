@@ -1,19 +1,30 @@
 import React, { useState, useEffect } from "react";
 import Search from "./components/search/Search";
 import Results from "./components/results/Results";
-import customDebounce from './components/debounce/customDebounce';
 import {API_KEY} from './utils/constants';
 import "./styles.scss";
 
 const url = `https://pixabay.com/api/?key=${API_KEY}`;
 export default function App() {
-  const [searchText, setSearchText] = useState("");
+  const getData = JSON.parse(localStorage.getItem('recents'));
+  const isDataAvailable = getData ? getData: [];
+  const [searchText, setSearchText] = useState("books");
   const [results, setResults] = useState({});
-  const [recents, setRecents] = useState(['Animal']);
+  const [recents, setRecents] = useState(isDataAvailable);
   const [showSuggestion, setShowSuggestion] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
-  const defaultText = searchText ? searchText : 'books';
-  const debouncedSearchTerm = customDebounce(defaultText, 500);
+
+  const saveLocalStorage = (recentText) => {
+    if(getData===null || getData === undefined) {
+      let newArr = [recentText];
+      localStorage.setItem('recents', JSON.stringify(newArr));
+    }
+    else {
+     const updateData = [recentText, ...getData];
+     setRecents(updateData);
+     localStorage.setItem('recents', JSON.stringify(updateData));
+     }
+  }
 
   const callToApi = (textPassed) => {
     return fetch(`${url}&q=${textPassed}&image_type=photo`)
@@ -22,9 +33,9 @@ export default function App() {
     .catch(err=> {console.log(err); return [];})
   }
   useEffect(()=> {
-    if (debouncedSearchTerm) {
+    if (searchText) {
       setIsSearching(true);
-      callToApi(debouncedSearchTerm)
+      callToApi(searchText)
       .then(results => {
         setIsSearching(false);
         setResults(results);
@@ -32,29 +43,31 @@ export default function App() {
     } else {
       setResults([]);
     }
-  },
-  [debouncedSearchTerm])
+  },[])
 
   const typeSearch = (e) => {
     const { value } = e.target
     setSearchText(value);
     setShowSuggestion(true);
-
-      if (debouncedSearchTerm) {
-        setIsSearching(true);
-        callToApi(debouncedSearchTerm)
-        .then(results => {
-          setIsSearching(false);
-          setResults(results);
-        });
-      }
   };
-  const handleSearch = (e) => {
+  const handleSubmitSearch = (e) => {
     e.preventDefault();
-    const typedText = searchText.charAt(0).toUpperCase() + searchText.slice(1)
-    if(typedText!=='' && typedText!==undefined) {
-     setRecents([...recents, typedText]);
-     setShowSuggestion(false);
+    setShowSuggestion(false);
+    const typedText = searchText.charAt(0).toUpperCase() + searchText.slice(1);
+    let notExist = recents.filter(recent=> recent===typedText).length === 0;
+    if(notExist) {
+      setRecents([...recents, typedText]);
+      saveLocalStorage(typedText);
+      setSearchText('');
+    }
+
+    if (typedText) {
+      setIsSearching(true);
+      callToApi(typedText)
+      .then(results => {
+        setIsSearching(false);
+        setResults(results);
+      });
     }
   };
   const handleBlur = e => {
@@ -77,23 +90,14 @@ export default function App() {
   const setToInput = (selected) => {
     setSearchText(selected);
     setShowSuggestion(false);
-    if (debouncedSearchTerm) {
-      setIsSearching(true);
-      callToApi(debouncedSearchTerm)
-      .then(results => {
-        setIsSearching(false);
-        setResults(results);
-      });
-    }
   };
   return (
     <div className="App">
       <h1>Autosuggest Search</h1>
-      {'<To be implemented- store recent searches with x icon to delete for specified durations>'}
       <Search
         searchText={searchText}
         typeSearch={typeSearch}
-        handleSearch={handleSearch}
+        handleSubmitSearch={handleSubmitSearch}
         handleBlur={handleBlur}
         showSuggestion={showSuggestion}
         recents={recents}
@@ -103,7 +107,7 @@ export default function App() {
        {isSearching ? 
        <p className="searching">Searching...</p>
         : (results.hits && results.hits.length> 0) 
-        && <p>Results for <span>{searchText}</span></p>}
+        && <p>Results found</p>}
       <Results 
        lists={results.hits}
       />
